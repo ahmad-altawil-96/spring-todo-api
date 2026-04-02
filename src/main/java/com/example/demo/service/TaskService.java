@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.exception.TaskNotFoundException;
 import com.example.demo.model.Task;
 import com.example.demo.repository.TaskRepository;
 import org.springframework.stereotype.Service;
@@ -22,12 +23,13 @@ public class TaskService {
     }
 
     public void deleteTask(Long id) {
+        taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
         taskRepository.deleteById(id);
     }
 
     public Task updateTask(Long id, Task updatedTask) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new TaskNotFoundException(id));
 
         task.setTitle(updatedTask.getTitle());
         task.setDescription(updatedTask.getDescription());
@@ -38,6 +40,6 @@ public class TaskService {
 
     public Task getTaskById(Long id) {
         return taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new TaskNotFoundException(id));
     }
 }
